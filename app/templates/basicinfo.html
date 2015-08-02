@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Personal Finance Project{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Basic Information</h1>
+    <p>Enter some basic information about your financial situation.</p>
+
+</div>
+
+<!--<form method="post" class="form" role="form">
+  {{ form.csrf_token }}
+  {{form.submit(class="btn btn-default")}}
+</form>-->
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+		
+		function processRadioButton(seshVal){
+        	if (seshVal=='True'){
+        		$('#haveEmergencyFund-0').prop('checked', true);
+        		$("#collapse-emergencyFund").collapse('show');
+        	}
+        	else if (seshVal=='False'){
+        		$('#haveEmergencyFund-1').prop('checked', true);
+        		$("#collapse-emergencyFund").collapse('hide');
+        	}
+        	else{
+        		$('#haveEmergencyFund-2').prop('checked', true);
+        		$("#collapse-emergencyFund").collapse('hide');
+        	}
+        };
+			    
+        $(function () { $('#collapse-emergencyFund').collapse({
+        toggle: false
+        })});
+
+        $(".radio-yes").click(function(){
+            $("#collapse-emergencyFund").collapse('show');
+        });
+
+        $(".radio-no-idk").click(function(){
+            $("#collapse-emergencyFund").collapse('hide');
+        });
+
+        
+
+        $(document).ready(function(){
+        	{% if sesh|length> 0 %}
+        	document.getElementById('monthlyExpense').setAttribute('value','{{sesh[0]}}');
+
+        	processRadioButton('{{sesh[1]}}');
+        	//$('input[name=haveEmergencyFund]')
+        	//document.getElementById('haveEmergencyFund-0').prop('checked',true);
+        	document.getElementById('emergencyFund').setAttribute('value','{{sesh[2]}}');
+        	document.getElementById('grossIncome').setAttribute('value','{{sesh[3]}}');
+			{%endif%}
+		});
+
+</script>
+{% endblock %}
+<form method="post" class="form" role="form" action="">
+	
+{{ form.csrf_token }}
+
+{% for field in form if field.widget.input_type != 'hidden'%}
+
+	<div class="form-group">
+    
+    {% if field.errors %}
+		<div class="has-error">
+	{%endif%}
+			
+     
+   
+	{% if field.type == "SubmitField" %}
+		{{ field(class="btn btn-default") }}
+
+	
+
+	{% elif field.type == "RadioField" %}
+		{{ field.label }} 
+		{% for subfield in field %}
+		<div class="radio">
+  		
+
+		{% if subfield.label.text=="Yes" %}
+		<label>
+		        <input class="radio-yes" type="radio" name="{{ subfield.name }}" id= "{{ subfield.id }}" value= "{{subfield.data}}" >{{subfield.label.text}}</label><!--data-toggle="collapse" data-target="#card"-->
+
+		{% else %}
+
+		<label>
+		        <input class="radio-no-idk" type="radio" name="{{ subfield.name }}" id= "{{ subfield.id }}" value= "{{subfield.data}}">{{subfield.label.text}}</label>
+		{% endif %}
+		</div>
+		{% endfor %}
+		
+	{% elif field.name=="emergencyFund" %}
+
+		<div id="collapse-emergencyFund" class="collapse">
+            {{ field.label }} 
+			<div class="input-group">
+      			<div class="input-group-addon">$</div>
+					{{ field(class="form-control") }}
+						<div class="input-group-addon">.00</div>
+
+		    	</div>
+        </div>
+
+
+	{% else %}		
+
+		{{ field.label }} 
+		{% if field.description == "$" %}
+			<div class="input-group">
+      			<div class="input-group-addon">$</div>
+					{{ field(class="form-control") }}
+						<div class="input-group-addon">.00</div>
+		    	</div>
+		{% elif field.description == "%" %}
+					<div class="input-group">
+						{{ field(class="form-control") }}
+						<div class="input-group-addon">%</div>
+		    		</div>
+		{% else %}
+					<div>{{ field(class="form-control") }}</div>
+
+		{% endif %}
+						
+	{%endif%}
+
+	</div>
+	{% if field.errors %}
+		</div>
+		<span style="color: red;">{% for error in field.errors %}{{ error }}{% if not loop.last %}<br />
+     	{% endif %}{% endfor %}</span>
+		{%endif%}
+
+	{% endfor %} 
+
+</form>
+
+
+{% endblock %}

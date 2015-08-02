@@ -8,5 +8,58 @@
     <h1>Calculator</h1>
     <p>Enter all data.</p>
 </div>
-{{ wtf.quick_form(form) }}
+
+<!--<form method="post" class="form" role="form">
+  {{ form.csrf_token }}
+  {{form.submit(class="btn btn-default")}}
+</form>-->
+
+
+<form method="post" class="form" role="form" action="">
+	
+{{ form.csrf_token }}
+
+{% for field in form if field.widget.input_type != 'hidden'%}
+
+	{% if field.type == "SubmitField" %}
+		{{ field(class="btn btn-default") }}
+	{% elif field.type == "FormField" %}
+	<h3>{{field.groupName}}</h3>
+	{% for innerfield in field %}
+		{%if innerfield.widget.input_type != 'hidden'%}
+		{{ innerfield.label }} 
+				{% if innerfield.description == "$" %}
+						<div class="input-group">
+      						<div class="input-group-addon">$</div>
+								{{ innerfield(class="form-control") }}
+							<div class="input-group-addon">.00</div>
+		    			</div>
+		    	{% elif innerfield.description == "%" %}
+						<div class="input-group">
+								{{ innerfield(class="form-control") }}
+							<div class="input-group-addon">%</div>
+		    			</div>
+				{% else %}
+
+					<div>{{ innerfield(class="form-control") }}</div>
+
+				{% endif %}
+		{%else%}
+						
+
+		{%endif%}
+		
+		{% endfor %}
+	{% endif %}
+	{% endfor %} 
+
+
+	
+
+
+
+
+</form>
+
+
 {% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Personal Finance Project{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Liabilities</h1>
+    <p>Enter your loan and debt details.</p>
+</div>
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+			
+		
+	
+	var uniqueId = 0; 
+	var numOfEntry = 0;
+	function addEntry() {
+    uniqueId++; 
+	numOfEntry++;
+    var html = '<div class="input-group"><input class="form-control" id="entry-'+uniqueId+'-input" type="text" name="uploaded_files[]" /><div class="input-group-addon">%</div></div> ' +'<input class="btn btn-default" type="button" value="Remove" onclick=removeElement("entry-' + uniqueId + '")>';
+    addElement('files', 'p', 'entry-' + uniqueId, html);
+	}
+	
+
+
+	function addElement(parentId, elementTag, elementId, html) {
+    var p = document.getElementById(parentId);
+    var newElement = document.createElement(elementTag);
+    newElement.setAttribute('id', elementId);
+    newElement.innerHTML = html;
+    p.appendChild(newElement);
+	}
+	
+	function removeElement(elementId) {
+    var element = document.getElementById(elementId);
+    element.parentNode.removeChild(element);
+	numOfEntry--;
+	}
+	
+	function submitRates(){
+		//go through each entry element, add , separated value to hiddend field.
+		var text='';
+		for (i = 0; i <= uniqueId; i++) { 
+			var entry = document.getElementById('entry-'+i+'-input');
+			//console.log = entry;
+			if(entry!=null){
+				text +=  entry.value+ ",";
+			}
+			//text +=  'entry-'+i+'-input'+ ",";
+		}
+		var hiddenElement = document.getElementById('liabilities');
+		hiddenElement.setAttribute('value',text);
+	}
+
+	$(document).ready(function(){
+		//add link to back button
+	    document.getElementById("back").onclick = function () {
+	        location.href = "basicinfo";
+	    };
+
+	    //load session data if exist
+	    {% if sesh|length > 0 %}
+	    	var counter=0;
+	    	{% for val in sesh %}
+	    		document.write("hi");
+	    		document.write("hi");
+
+	    		counter++;
+				addEntry();
+	    		document.getElementById("entry-"+counter+"-input").setAttribute('value','{{val}}')
+	    	{% endfor %}
+        	
+		{%endif%}
+
+
+	});
+	
+
+
+
+
+</script>
+{% endblock %}
+
+
+<div class="panel panel-default">
+  		<div class="panel-body">
+			<p>If you have any loans/debts, enter the interest rates for each one.</p>
+			{% if form.liabilities.errors|length >0 %}
+			<span style="color: red;">{{form.liabilities.errors[0]}}</span>
+			{% endif %}
+    		<div id="files">
+        
+    		</div>
+    		<p><input class="btn btn-default" type="button" value="Add" onclick="addEntry();" /></p>
+
+    	</div>
+</div>
+
+<form method="post" class="form" role="form" action="">
+	
+{{ form.csrf_token }}
+
+{{ form.validationText }}
+{{sesh}}
+{% for field in form %}
+	<div class="form-group">
+	{% if field.type == "SubmitField" %}
+		<input class="btn btn-default" id="back" name="submit" value="Back">
+		{{ field(class="btn btn-default", onclick="submitRates();") }}
+	
+	{% elif field.type == "HiddenField" %}		
+
+		{{ field }} 
+	
+	{% else %}
+		{{ field }}
+						
+	{%endif%}
+	</div>
+		
+{% endfor %} 
+
+
+</form>
+
+
+
+{% endblock %}

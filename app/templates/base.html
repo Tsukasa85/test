@@ -23,7 +23,10 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.index') }}">Home</a></li>
-                <li><a href="{{ url_for('main.calc')}}">Calculator</a></li>
+                <li><a href="{{ url_for('main.basicinfo')}}">1. Basic Information</a></li>
+                <li><a href="{{ url_for('main.liabilities')}}">2. Liabilities</a></li>
+                <li><a href="{{ url_for('main.assets')}}">3. Assets</a></li>
+                <li><a href="{{ url_for('main.results')}}">4. Results</a></li>
 
             </ul>
         </div>
@@ -46,5 +49,15 @@
 
 {% block scripts %}
 {{ super() }}
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+    
+    
+    
+
+</script>
+
 {{ moment.include_moment() }}
 {% endblock %}
